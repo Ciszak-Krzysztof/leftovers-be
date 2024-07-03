@@ -9,3 +9,14 @@ services:
       - 5432:5432
     env_file:
       - ".env"
+    volumes:
+      - postgres-data:/data/postgres
+    networks:
+      - fullstack-project
+
+networks:
+  fullstack-project:
+    driver: bridge
+
+volumes:
+  postgres-data:

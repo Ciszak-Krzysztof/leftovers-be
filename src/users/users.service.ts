@@ -9,4 +9,8 @@ export class UsersService {
   async getUsers(): Promise<User[]> {
     return this.usersRepository.getUsers();
   }
+
+  async getUser(id: string): Promise<User> {
+    return this.usersRepository.getUser(id);
+  }
 }

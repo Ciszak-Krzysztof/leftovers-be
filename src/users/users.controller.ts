@@ -1,7 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from '@prisma/client';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { UsersEntity } from './entities/users.entity';
 
 @ApiTags('users')
 @Controller('users')
@@ -10,8 +16,16 @@ export class UsersController {
 
   @Get()
   @ApiOperation({ summary: 'Get users list' })
-  @ApiResponse({ status: 200, description: 'users list', type: 'User' })
+  @ApiOkResponse({ type: UsersEntity, isArray: true })
   getUsers(): Promise<User[]> {
     return this.usersService.getUsers();
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get users by id' })
+  @ApiOkResponse({ type: UsersEntity })
+  @ApiNotFoundResponse({ description: 'User not found' })
+  getUser(@Param('id') id: string): Promise<User> {
+    return this.usersService.getUser(id);
   }
 }

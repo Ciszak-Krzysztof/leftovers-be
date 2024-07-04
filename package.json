@@ -2,7 +2,7 @@
   "name": "leftovers-backend",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "Krzysztof Ciszak",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -28,7 +28,8 @@
     "@nestjs/platform-express": "^10.0.0",
     "@prisma/client": "^5.16.1",
     "reflect-metadata": "^0.2.0",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

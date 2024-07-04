@@ -7,6 +7,6 @@ export class UsersService {
   constructor(private usersRepository: UsersRepository) {}
 
   async getUsers(): Promise<User[]> {
-    return this.usersRepository.getUsers({});
+    return this.usersRepository.getUsers();
   }
 }

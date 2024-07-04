@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  database:
+    container_name: leftovers-postgres
+    image: postgres:16.3
+    restart: always
+    ports:
+      - 5432:5432
+    env_file:
+      - ".env"

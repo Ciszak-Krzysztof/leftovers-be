@@ -5,8 +5,5 @@ export class GetUserResponse {
   id: string;
 
   @ApiProperty()
-  name: string;
-
-  @ApiProperty()
   email: string;
 }

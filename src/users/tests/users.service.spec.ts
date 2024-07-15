@@ -1,18 +1,40 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
+import { UsersService } from '../users.service';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { UsersRepository } from '../users.repository';
+import { mockedGetUsers } from '../mocks/users.mock';
 
 describe('UsersService', () => {
-  let service: UsersService;
+  let usersService: UsersService;
+  let usersRepository: UsersRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersService],
+      providers: [
+        UsersService,
+        UsersRepository,
+        {
+          provide: PrismaService,
+          useValue: {
+            user: { findMany: jest.fn().mockReturnValue(mockedGetUsers) },
+          },
+        },
+      ],
     }).compile();
 
-    service = module.get<UsersService>(UsersService);
+    usersService = module.get<UsersService>(UsersService);
+    usersRepository = module.get<UsersRepository>(UsersRepository);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  describe('getUsers', () => {
+    it('should call prisma getUsers from usersRepository', async () => {
+      const mockGetUsers = jest.fn().mockReturnValue(mockedGetUsers);
+      jest.spyOn(usersRepository, 'getUsers').mockImplementation(mockGetUsers);
+
+      await usersService.getUsers();
+
+      expect(usersRepository.getUsers).toBeCalled();
+      expect(await usersService.getUsers()).toBe(mockedGetUsers);
+    });
   });
 });

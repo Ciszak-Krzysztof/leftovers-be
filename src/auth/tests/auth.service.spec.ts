@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../auth.service';
 import { UsersRepository } from 'src/users/users.repository';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { mockedCorrectSignUpCredentials } from 'src/users/mocks/users.mock';
 
 describe('AuthService', () => {
@@ -12,11 +11,10 @@ describe('AuthService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
-        UsersRepository,
         {
-          provide: PrismaService,
+          provide: UsersRepository,
           useValue: {
-            user: { create: jest.fn().mockReturnValue({}) },
+            createUser: jest.fn(),
           },
         },
       ],
@@ -31,15 +29,20 @@ describe('AuthService', () => {
   });
 
   describe('signUp', () => {
-    it('should call createUser from usersRepository', async () => {
-      const mockGetUsers = jest.fn().mockReturnValue({});
-      jest
-        .spyOn(usersRepository, 'createUser')
-        .mockImplementation(mockGetUsers);
-
+    it('should call usersRepository.createUser with the correct arguments', async () => {
       await authService.signUp(mockedCorrectSignUpCredentials);
 
-      expect(usersRepository.createUser).toBeCalled();
+      expect(usersRepository.createUser).toHaveBeenCalledWith(
+        mockedCorrectSignUpCredentials,
+      );
+    });
+
+    it('should return a Promise<void>', async () => {
+      usersRepository.createUser = jest.fn().mockResolvedValue(undefined);
+
+      await expect(
+        authService.signUp(mockedCorrectSignUpCredentials),
+      ).resolves.toBeUndefined();
     });
   });
 });

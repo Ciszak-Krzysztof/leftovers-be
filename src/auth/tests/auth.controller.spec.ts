@@ -14,7 +14,7 @@ describe('AuthController', () => {
         {
           provide: AuthService,
           useValue: {
-            signUp: jest.fn().mockReturnValue([]),
+            signUp: jest.fn(),
           },
         },
       ],
@@ -28,12 +28,21 @@ describe('AuthController', () => {
     expect(authController).toBeDefined();
   });
 
-  it('should call signUp method from auth service', async () => {
-    const mockSignUp = jest.fn().mockReturnValue([]);
-    jest.spyOn(authService, 'signUp').mockImplementation(mockSignUp);
+  describe('signUp', () => {
+    it('should call authService.signUp with the correct arguments', async () => {
+      await authController.signUp(mockedCorrectSignUpCredentials);
 
-    await authController.signUp(mockedCorrectSignUpCredentials);
+      expect(authService.signUp).toHaveBeenCalledWith(
+        mockedCorrectSignUpCredentials,
+      );
+    });
 
-    expect(authService.signUp).toBeCalled();
+    it('should return a Promise<void>', async () => {
+      authService.signUp = jest.fn().mockResolvedValue(undefined);
+
+      await expect(
+        authController.signUp(mockedCorrectSignUpCredentials),
+      ).resolves.toBeUndefined();
+    });
   });
 });

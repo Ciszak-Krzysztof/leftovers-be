@@ -1,3 +1,5 @@
+import { AuthCredentialsDto } from 'src/auth/dto/auth-credentials.dto';
+
 export const mockedGetUsers = [
   {
     id: 'f4f81f5f-ee2a-4dc6-a1af-3d6ad4fc12ca',
@@ -21,7 +23,7 @@ export const mockedGetUsers = [
   },
 ];
 
-export const mockedCorrectSignUpCredentials = {
+export const mockedCorrectSignUpCredentials: AuthCredentialsDto = {
   email: 'test1@test.com',
   password: 'Password1#',
 };

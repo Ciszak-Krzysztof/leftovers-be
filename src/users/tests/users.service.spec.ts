@@ -1,8 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from '../users.service';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { UsersRepository } from '../users.repository';
-import { mockedGetUsers } from '../mocks/users.mock';
+import { GetUserResponse } from '../dto/get-user-response.dto';
 
 describe('UsersService', () => {
   let usersService: UsersService;
@@ -12,11 +11,11 @@ describe('UsersService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
-        UsersRepository,
         {
-          provide: PrismaService,
+          provide: UsersRepository,
           useValue: {
-            user: { findMany: jest.fn().mockReturnValue(mockedGetUsers) },
+            getUsers: jest.fn(),
+            getUser: jest.fn(),
           },
         },
       ],
@@ -26,15 +25,38 @@ describe('UsersService', () => {
     usersRepository = module.get<UsersRepository>(UsersRepository);
   });
 
+  it('should be defined', () => {
+    expect(usersService).toBeDefined();
+  });
+
   describe('getUsers', () => {
-    it('should call prisma getUsers from usersRepository', async () => {
-      const mockGetUsers = jest.fn().mockReturnValue(mockedGetUsers);
-      jest.spyOn(usersRepository, 'getUsers').mockImplementation(mockGetUsers);
+    it('should call usersRepository.getUsers and return an array of GetUserResponse', async () => {
+      const result: GetUserResponse[] = [{ id: '1', email: 'test1@test.com' }];
+      jest.spyOn(usersRepository, 'getUsers').mockResolvedValue(result);
 
-      await usersService.getUsers();
+      expect(await usersService.getUsers()).toBe(result);
+      expect(usersRepository.getUsers).toHaveBeenCalled();
+    });
+  });
 
-      expect(usersRepository.getUsers).toBeCalled();
-      expect(await usersService.getUsers()).toBe(mockedGetUsers);
+  describe('getUser', () => {
+    it('should call usersRepository.getUser with the correct id and return a GetUserResponse', async () => {
+      const result: GetUserResponse = { id: '1', email: 'test1@test.com' };
+      const id = '1';
+      jest.spyOn(usersRepository, 'getUser').mockResolvedValue(result);
+
+      expect(await usersService.getUser(id)).toBe(result);
+      expect(usersRepository.getUser).toHaveBeenCalledWith(id);
+    });
+
+    it('should throw an error if user is not found', async () => {
+      const id = '1';
+      jest
+        .spyOn(usersRepository, 'getUser')
+        .mockRejectedValue(new Error('User not found'));
+
+      await expect(usersService.getUser(id)).rejects.toThrow('User not found');
+      expect(usersRepository.getUser).toHaveBeenCalledWith(id);
     });
   });
 });

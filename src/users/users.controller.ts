@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
   ApiNotFoundResponse,
@@ -6,6 +6,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { GetUserResponse } from './dto/get-user-response.dto';
 
 @ApiTags('users')
@@ -14,6 +15,7 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get users list' })
   @ApiOkResponse({ type: GetUserResponse, isArray: true })
   getUsers(): Promise<Array<GetUserResponse>> {
@@ -21,6 +23,7 @@ export class UsersController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get users by id' })
   @ApiOkResponse({ type: GetUserResponse })
   @ApiNotFoundResponse({ description: 'User not found' })

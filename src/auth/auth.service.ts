@@ -1,12 +1,56 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersRepository } from 'src/users/users.repository';
-import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import {
+  AuthCredentialsDto,
+  LoginCredentialsDto,
+} from './dto/auth-credentials.dto';
+import { Tokens } from './dto/tokens.dto';
+import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from './dto/jwt-pauload.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersRepository: UsersRepository) {}
+  constructor(
+    private usersRepository: UsersRepository,
+    private jwtService: JwtService,
+  ) {}
 
   async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
     return this.usersRepository.createUser(authCredentialsDto);
+  }
+
+  async signIn(loginCredentialsDto: LoginCredentialsDto): Promise<Tokens> {
+    const user = await this.usersRepository.getUserByEmail(
+      loginCredentialsDto.email,
+    );
+
+    if (!user) {
+      throw new UnauthorizedException('Wrong login credentials');
+    }
+
+    const passwordMatch = await bcrypt.compare(
+      loginCredentialsDto.password,
+      user.password,
+    );
+    if (!passwordMatch)
+      throw new UnauthorizedException('Wrong login credentials');
+
+    const tokens = await this.getTokens(user.id, user.email);
+
+    return tokens;
+  }
+
+  async getTokens(userId: string, email: string): Promise<Tokens> {
+    const payload: JwtPayload = {
+      userId,
+      email,
+    };
+
+    const accessToken = await this.jwtService.sign(payload);
+
+    return {
+      accessToken,
+    };
   }
 }

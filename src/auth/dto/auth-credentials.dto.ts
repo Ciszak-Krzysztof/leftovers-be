@@ -20,3 +20,13 @@ export class AuthCredentialsDto {
   })
   password: string;
 }
+
+export class LoginCredentialsDto {
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}

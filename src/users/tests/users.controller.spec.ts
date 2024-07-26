@@ -2,6 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from '../users.controller';
 import { UsersService } from '../users.service';
 import { GetUserResponse } from '../dto/get-user-response.dto';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 describe('UsersController', () => {
   let usersController: UsersController;
@@ -18,6 +21,9 @@ describe('UsersController', () => {
             getUser: jest.fn(),
           },
         },
+        AuthGuard,
+        JwtService,
+        ConfigService,
       ],
     }).compile();
 

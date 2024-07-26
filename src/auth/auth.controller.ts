@@ -6,6 +6,7 @@ import {
 } from './dto/auth-credentials.dto';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Tokens } from './dto/tokens.dto';
+import { LoginResponse } from './dto/login-response.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -21,7 +22,7 @@ export class AuthController {
 
   @Post('/login')
   @ApiOperation({ summary: 'Login user' })
-  @ApiOkResponse()
+  @ApiOkResponse({ type: LoginResponse })
   signIn(@Body() loginCredentialsDto: LoginCredentialsDto): Promise<Tokens> {
     return this.authService.signIn(loginCredentialsDto);
   }

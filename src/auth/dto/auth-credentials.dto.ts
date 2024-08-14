@@ -30,3 +30,12 @@ export class LoginCredentialsDto {
   @IsNotEmpty()
   password: string;
 }
+export class VerifyAccountDto {
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  token: string;
+}

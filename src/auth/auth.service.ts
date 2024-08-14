@@ -3,12 +3,14 @@ import { UsersRepository } from 'src/users/users.repository';
 import {
   AuthCredentialsDto,
   LoginCredentialsDto,
+  VerifyAccountDto,
 } from './dto/auth-credentials.dto';
 import { Tokens } from './dto/tokens.dto';
 import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from './dto/jwt-payload.dto';
+import { JwtService, TokenExpiredError } from '@nestjs/jwt';
+import { JwtPayload, VerifyAccountJwtPayload } from './dto/jwt-payload.dto';
 import { MailingService } from 'src/mailing/mailing.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +18,7 @@ export class AuthService {
     private usersRepository: UsersRepository,
     private jwtService: JwtService,
     private mailingService: MailingService,
+    private configService: ConfigService,
   ) {}
 
   async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
@@ -33,6 +36,28 @@ export class AuthService {
       email: authCredentialsDto.email,
       token,
     });
+  }
+
+  async verifyAccount(verifyAccountDto: VerifyAccountDto): Promise<void> {
+    let payload: VerifyAccountJwtPayload;
+    try {
+      payload = await this.jwtService.verifyAsync(verifyAccountDto.token, {
+        secret: this.configService.get<string>('JWT_SECRET'),
+      });
+    } catch (error) {
+      if (error instanceof TokenExpiredError) {
+        throw new UnauthorizedException('Token has expired');
+      }
+      throw new UnauthorizedException('Invalid JWT token');
+    }
+
+    if (payload.email !== verifyAccountDto.email) {
+      throw new UnauthorizedException('Invalid JWT token');
+    }
+
+    const user = await this.usersRepository.getUserByEmail(payload.email);
+
+    await this.usersRepository.verifyUser(user.id);
   }
 
   async signIn(loginCredentialsDto: LoginCredentialsDto): Promise<Tokens> {

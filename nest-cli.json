@@ -4,6 +4,7 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "assets": ["mailing/templates/**/*"]
+    "assets": [{ "include": "mailing/templates/**/*", "outDir": "dist/src" }],
+    "watchAssets": true
   }
 }

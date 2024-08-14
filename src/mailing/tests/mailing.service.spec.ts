@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MailerService } from '@nestjs-modules/mailer';
 import { MailingService } from '../mailing.service';
 import { SendEmailDto } from '../dto/sendEmail.dto';
+import { ConfigService } from '@nestjs/config';
 
 describe('MailingService', () => {
   let mailingService: MailingService;
@@ -10,6 +11,7 @@ describe('MailingService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        ConfigService,
         MailingService,
         {
           provide: MailerService,

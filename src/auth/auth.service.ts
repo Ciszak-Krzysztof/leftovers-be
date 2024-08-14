@@ -7,17 +7,32 @@ import {
 import { Tokens } from './dto/tokens.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from './dto/jwt-pauload.dto';
+import { JwtPayload } from './dto/jwt-payload.dto';
+import { MailingService } from 'src/mailing/mailing.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersRepository: UsersRepository,
     private jwtService: JwtService,
+    private mailingService: MailingService,
   ) {}
 
   async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
     return this.usersRepository.createUser(authCredentialsDto);
+  }
+
+  async register(authCredentialsDto: AuthCredentialsDto): Promise<void> {
+    await this.usersRepository.createUser(authCredentialsDto);
+
+    const token = await this.jwtService.sign({
+      email: authCredentialsDto.email,
+    });
+
+    return this.mailingService.sendVerifyAccountEmail({
+      email: authCredentialsDto.email,
+      token,
+    });
   }
 
   async signIn(loginCredentialsDto: LoginCredentialsDto): Promise<Tokens> {

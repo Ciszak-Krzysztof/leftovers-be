@@ -20,6 +20,13 @@ export class AuthController {
     return this.authService.signUp(authCredentials);
   }
 
+  @Post('/register')
+  @ApiOperation({ summary: 'Create new user' })
+  @ApiOkResponse()
+  register(@Body() authCredentials?: AuthCredentialsDto): Promise<void> {
+    return this.authService.register(authCredentials);
+  }
+
   @Post('/login')
   @ApiOperation({ summary: 'Login user' })
   @ApiOkResponse({ type: LoginResponse })

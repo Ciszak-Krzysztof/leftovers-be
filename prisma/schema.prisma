@@ -15,8 +15,53 @@ datasource db {
 }
 
 model User {
-  id         String  @id() @default(uuid())
-  email      String  @unique
-  password   String  @default("password")
-  isVerified Boolean @default(false)
+  id         String   @id() @default(uuid())
+  email      String   @unique
+  password   String   @default("password")
+  isVerified Boolean  @default(false)
+  Recipe     Recipe[]
+  Rating     Rating[]
+}
+
+model Category {
+  id     String   @id() @default(uuid())
+  name   String   @unique
+  Recipe Recipe[]
+}
+
+model Recipe {
+  id               String          @id() @default(uuid())
+  title            String
+  description      String
+  categoryId       String
+  category         Category        @relation(fields: [categoryId], references: [id])
+  preparationTime  PreparationTime @default(UP_TO_15_MIN)
+  ingredients      String[]
+  preparationSteps String[]
+  isPublic         Visibility      @default(PRIVATE)
+  createdAt        DateTime        @default(now())
+  authorId         String
+  author           User            @relation(fields: [authorId], references: [id])
+  ratings          Rating[]
+}
+
+model Rating {
+  id       String @id() @default(uuid())
+  rating   Int
+  recipeId String
+  Recipe   Recipe @relation(fields: [recipeId], references: [id])
+  userId   String
+  User     User   @relation(fields: [userId], references: [id])
+}
+
+enum Visibility {
+  PRIVATE
+  PUBLIC
+}
+
+enum PreparationTime {
+  UP_TO_15_MIN
+  UP_TO_30_MIN
+  UP_TO_60_MIN
+  OVER_60_MIN
 }

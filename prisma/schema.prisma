@@ -38,11 +38,11 @@ model Recipe {
   preparationTime  PreparationTime @default(UP_TO_15_MIN)
   ingredients      String[]
   preparationSteps String[]
-  isPublic         Visibility      @default(PRIVATE)
+  isPublic         Boolean         @default(false)
   createdAt        DateTime        @default(now())
   authorId         String
   author           User            @relation(fields: [authorId], references: [id])
-  ratings          Rating[]
+  ratings           Rating[]
 }
 
 model Rating {
@@ -52,11 +52,6 @@ model Rating {
   Recipe   Recipe @relation(fields: [recipeId], references: [id])
   userId   String
   User     User   @relation(fields: [userId], references: [id])
-}
-
-enum Visibility {
-  PRIVATE
-  PUBLIC
 }
 
 enum PreparationTime {

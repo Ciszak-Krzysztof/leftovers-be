@@ -51,6 +51,36 @@ async function main() {
       authorId: 'f4f81f5f-ee2a-4dc6-a1af-3d6ad4fc12ca',
     },
   });
+
+  await prisma.rating.upsert({
+    where: { id: '9cc9abcb-0c37-47bd-bc8b-9a02ac07ccf3' },
+    update: {},
+    create: {
+      rating: 4,
+      recipeId: 'f185aa99-6ea1-49f3-8ea4-db9c7f2a1193',
+      userId: 'b183b147-238b-4d14-b385-33aa8cc33ee3',
+    },
+  });
+
+  await prisma.rating.upsert({
+    where: { id: '3c77736d-2576-431a-b76b-683189226a05' },
+    update: {},
+    create: {
+      rating: 5,
+      recipeId: 'f185aa99-6ea1-49f3-8ea4-db9c7f2a1193',
+      userId: 'b183b147-238b-4d14-b385-33aa8cc33ee3',
+    },
+  });
+
+  await prisma.rating.upsert({
+    where: { id: '9bd545c8-37c0-49c6-9c72-ec28dca1d47c' },
+    update: {},
+    create: {
+      rating: 3,
+      recipeId: '702d6186-c595-45a9-ae38-246a3735f327',
+      userId: 'b183b147-238b-4d14-b385-33aa8cc33ee3',
+    },
+  });
 }
 
 main()

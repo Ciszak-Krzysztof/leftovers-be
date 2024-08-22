@@ -2,6 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from '../users.controller';
 import { UsersService } from '../users.service';
 import { GetUserResponse } from '../dto/get-user-response.dto';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { faker } from '@faker-js/faker';
+import { v4 as uuidv4 } from 'uuid';
 
 describe('UsersController', () => {
   let usersController: UsersController;
@@ -18,6 +23,9 @@ describe('UsersController', () => {
             getUser: jest.fn(),
           },
         },
+        AuthGuard,
+        JwtService,
+        ConfigService,
       ],
     }).compile();
 
@@ -31,7 +39,9 @@ describe('UsersController', () => {
 
   describe('getUsers', () => {
     it('should call usersService.getUsers and return an array of GetUserResponse', async () => {
-      const result: GetUserResponse[] = [{ id: '1', email: 'test1@test.com' }];
+      const result: GetUserResponse[] = [
+        { id: uuidv4(), email: faker.internet.email() },
+      ];
       jest.spyOn(usersService, 'getUsers').mockResolvedValue(result);
 
       expect(await usersController.getUsers()).toBe(result);
@@ -41,7 +51,10 @@ describe('UsersController', () => {
 
   describe('getUser', () => {
     it('should call usersService.getUser with the correct id and return a GetUserResponse', async () => {
-      const result: GetUserResponse = { id: '1', email: 'test1@test.com' };
+      const result: GetUserResponse = {
+        id: uuidv4(),
+        email: faker.internet.email(),
+      };
       const id = '1';
       jest.spyOn(usersService, 'getUser').mockResolvedValue(result);
 

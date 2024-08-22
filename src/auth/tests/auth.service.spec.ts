@@ -2,6 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../auth.service';
 import { UsersRepository } from 'src/users/users.repository';
 import { mockedCorrectSignUpCredentials } from 'src/users/mocks/users.mock';
+import { JwtService } from '@nestjs/jwt';
+import { MailingService } from 'src/mailing/mailing.service';
+import { MailerService } from '@nestjs-modules/mailer';
+import { ConfigService } from '@nestjs/config';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -9,8 +13,18 @@ describe('AuthService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [],
       providers: [
         AuthService,
+        JwtService,
+        MailingService,
+        {
+          provide: MailerService,
+          useValue: {
+            sendMail: jest.fn(),
+          },
+        },
+        ConfigService,
         {
           provide: UsersRepository,
           useValue: {

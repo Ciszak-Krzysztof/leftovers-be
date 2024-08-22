@@ -3,6 +3,7 @@ import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
 import { RecipesRepository } from './recipes.repository';
 import { GetRecipesQueryParamsDto } from './dto/get-recipe-query-params.dto';
+import { GetRecipesResponse } from './dto/get-recipe-response';
 
 @Injectable()
 export class RecipesService {
@@ -15,7 +16,7 @@ export class RecipesService {
   async getRecipes(
     userId: string,
     queryParams: GetRecipesQueryParamsDto,
-  ): Promise<Array<any>> {
+  ): Promise<GetRecipesResponse> {
     return this.recipeRepository.getRecipes(userId, queryParams);
   }
 

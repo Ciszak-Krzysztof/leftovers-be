@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Ingredient, PreparationStep, Rating } from '@prisma/client';
 
-export class RecipeDto {
+export class GetRecipeResponse {
   @ApiProperty()
   id: string;
 
@@ -18,13 +18,7 @@ export class RecipeDto {
   preparationTime: string;
 
   @ApiProperty()
-  ingredients: Ingredient[];
-
-  @ApiProperty()
-  preparationSteps: PreparationStep[];
-
-  @ApiProperty()
-  isPublic: 'PRIVATE' | 'PUBLIC';
+  isPublic: boolean;
 
   @ApiProperty()
   createdAt: Date;
@@ -33,5 +27,15 @@ export class RecipeDto {
   authorId: string;
 
   @ApiProperty()
-  ratings: Rating[];
+  ingredients?: Ingredient[];
+
+  @ApiProperty()
+  preparationSteps?: PreparationStep[];
+
+  @ApiProperty()
+  ratings?: Rating[];
+}
+
+export class GetRecipesResponse {
+  recipes: GetRecipeResponse[];
 }

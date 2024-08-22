@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { GetRecipesQueryParamsDto } from './dto/get-recipe-query-params.dto';
 import { Prisma } from '@prisma/client';
+import { GetRecipesResponse } from './dto/get-recipe-response';
 
 @Injectable()
 export class RecipesRepository {
@@ -10,7 +11,7 @@ export class RecipesRepository {
   async getRecipes(
     userId: string,
     queryParams: GetRecipesQueryParamsDto,
-  ): Promise<any> {
+  ): Promise<GetRecipesResponse> {
     const {
       details,
       categoryIds,
@@ -81,7 +82,7 @@ export class RecipesRepository {
       recipeIdsWithHighAvgRating = avgRatings.map((r) => r.recipeId);
     }
 
-    return this.prisma.recipe.findMany({
+    const recipes = await this.prisma.recipe.findMany({
       where: {
         ...(userId
           ? {
@@ -107,5 +108,7 @@ export class RecipesRepository {
         ratings: true,
       },
     });
+
+    return { recipes: recipes };
   }
 }

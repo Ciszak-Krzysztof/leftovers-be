@@ -13,6 +13,7 @@ import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
 import { GetUserId } from 'src/common/decorators/getUserId.decorator';
 import { GetRecipesQueryParamsDto } from './dto/get-recipe-query-params.dto';
+import { GetRecipesResponse } from './dto/get-recipe-response';
 
 @Controller('recipes')
 export class RecipesController {
@@ -27,7 +28,7 @@ export class RecipesController {
   getRecipes(
     @GetUserId() userId: string | null,
     @Query() queryParams: GetRecipesQueryParamsDto,
-  ) {
+  ): Promise<GetRecipesResponse> {
     return this.recipesService.getRecipes(userId, queryParams);
   }
 

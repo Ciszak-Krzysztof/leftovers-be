@@ -45,10 +45,53 @@ async function main() {
       description: 'Example recipe description',
       categoryId: 'ea923918-bec5-4e3b-9753-c6405e90f773',
       preparationTime: 'UP_TO_15_MIN',
-      ingredients: ['ing1', 'ing2'],
-      preparationSteps: ['prep1', 'prep2'],
       isPublic: false,
       authorId: 'f4f81f5f-ee2a-4dc6-a1af-3d6ad4fc12ca',
+    },
+  });
+
+  await prisma.ingredient.upsert({
+    where: { id: 'f7029d9d-838b-4aac-9dc5-7fa544214459' },
+    update: {},
+    create: {
+      name: 'pasta',
+      recipeId: 'f185aa99-6ea1-49f3-8ea4-db9c7f2a1193',
+    },
+  });
+
+  await prisma.ingredient.upsert({
+    where: { id: 'a0d0e8c9-7805-4bf0-aed8-a3b4b0784f9b' },
+    update: {},
+    create: {
+      name: 'cheese',
+      recipeId: 'f185aa99-6ea1-49f3-8ea4-db9c7f2a1193',
+    },
+  });
+
+  await prisma.ingredient.upsert({
+    where: { id: '25037f44-5e97-4ee1-8d91-ead705b1a0b8' },
+    update: {},
+    create: {
+      name: 'vegetables',
+      recipeId: '702d6186-c595-45a9-ae38-246a3735f327',
+    },
+  });
+
+  await prisma.preparationStep.upsert({
+    where: { id: '455b64d1-5bed-4cef-993b-4fb198c6d382' },
+    update: {},
+    create: {
+      step: 'mix the ingredients',
+      recipeId: 'f185aa99-6ea1-49f3-8ea4-db9c7f2a1193',
+    },
+  });
+
+  await prisma.preparationStep.upsert({
+    where: { id: '5c74684b-d3f3-4962-86f9-8be34021a50e' },
+    update: {},
+    create: {
+      step: 'take the pot',
+      recipeId: '702d6186-c595-45a9-ae38-246a3735f327',
     },
   });
 

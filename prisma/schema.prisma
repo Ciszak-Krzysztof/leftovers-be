@@ -29,20 +29,34 @@ model Category {
   Recipe Recipe[]
 }
 
+model Ingredient {
+  id       String @id() @default(uuid())
+  name     String
+  recipeId String
+  Recipe   Recipe @relation(fields: [recipeId], references: [id])
+}
+
+model PreparationStep {
+  id       String @id() @default(uuid())
+  step     String
+  recipeId String
+  Recipe   Recipe @relation(fields: [recipeId], references: [id])
+}
+
 model Recipe {
-  id               String          @id() @default(uuid())
+  id               String            @id() @default(uuid())
   title            String
   description      String
   categoryId       String
-  category         Category        @relation(fields: [categoryId], references: [id])
-  preparationTime  PreparationTime @default(UP_TO_15_MIN)
-  ingredients      String[]
-  preparationSteps String[]
-  isPublic         Boolean         @default(false)
-  createdAt        DateTime        @default(now())
+  category         Category          @relation(fields: [categoryId], references: [id])
+  preparationTime  PreparationTime   @default(UP_TO_15_MIN)
+  ingredients      Ingredient[]
+  preparationSteps PreparationStep[]
+  isPublic         Boolean           @default(false)
+  createdAt        DateTime          @default(now())
   authorId         String
-  author           User            @relation(fields: [authorId], references: [id])
-  ratings           Rating[]
+  author           User              @relation(fields: [authorId], references: [id])
+  ratings          Rating[]
 }
 
 model Rating {

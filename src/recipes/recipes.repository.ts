@@ -11,7 +11,44 @@ export class RecipesRepository {
     userId: string,
     queryParams: GetRecipesQueryParamsDto,
   ): Promise<any> {
-    const { details, categoryIds, startDate, endDate, rating } = queryParams;
+    const {
+      details,
+      categoryIds,
+      startDate,
+      endDate,
+      rating,
+      title,
+      description,
+      ingredient,
+      step,
+    } = queryParams;
+
+    const textSearchConditions: Prisma.Enumerable<Prisma.RecipeWhereInput> = [];
+
+    if (title) {
+      textSearchConditions.push({
+        title: { contains: title, mode: 'insensitive' },
+      });
+    }
+    if (description) {
+      textSearchConditions.push({
+        description: { contains: description, mode: 'insensitive' },
+      });
+    }
+    if (ingredient) {
+      textSearchConditions.push({
+        ingredients: {
+          some: { name: { contains: ingredient, mode: 'insensitive' } },
+        },
+      });
+    }
+    if (step) {
+      textSearchConditions.push({
+        preparationSteps: {
+          some: { step: { contains: step, mode: 'insensitive' } },
+        },
+      });
+    }
 
     const prismaQuery: Prisma.RecipeWhereInput = {
       createdAt: {
@@ -21,23 +58,28 @@ export class RecipesRepository {
       categoryId: {
         in: categoryIds,
       },
+      OR: textSearchConditions,
     };
 
-    const avgRatings = await this.prisma.rating.groupBy({
-      by: ['recipeId'],
-      _avg: {
-        rating: true,
-      },
-      having: {
-        rating: {
-          _avg: {
-            gte: +rating || 0,
+    let recipeIdsWithHighAvgRating;
+
+    if (rating) {
+      const avgRatings = await this.prisma.rating.groupBy({
+        by: ['recipeId'],
+        _avg: {
+          rating: true,
+        },
+        having: {
+          rating: {
+            _avg: {
+              gte: +rating || 0,
+            },
           },
         },
-      },
-    });
+      });
 
-    const recipeIdsWithHighAvgRating = avgRatings.map((r) => r.recipeId);
+      recipeIdsWithHighAvgRating = avgRatings.map((r) => r.recipeId);
+    }
 
     return this.prisma.recipe.findMany({
       where: {
@@ -46,20 +88,22 @@ export class RecipesRepository {
               AND: [
                 { OR: [{ isPublic: true }, { authorId: userId }] },
                 prismaQuery,
-                { id: { in: recipeIdsWithHighAvgRating } },
+                { ...(rating && { id: { in: recipeIdsWithHighAvgRating } }) },
               ],
             }
           : {
               AND: [
                 { isPublic: true },
                 prismaQuery,
-                { id: { in: recipeIdsWithHighAvgRating } },
+                { ...(rating && { id: { in: recipeIdsWithHighAvgRating } }) },
               ],
             }),
       },
       include: {
         author: details === 'true',
         category: details === 'true',
+        preparationSteps: details === 'true',
+        ingredients: details === 'true',
         ratings: true,
       },
     });

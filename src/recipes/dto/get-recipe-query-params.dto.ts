@@ -23,4 +23,16 @@ export class GetRecipesQueryParamsDto {
   @IsDate()
   @Transform(({ value }) => new Date(value))
   endDate: Date;
+
+  @IsOptional()
+  title: string;
+
+  @IsOptional()
+  description: string;
+
+  @IsOptional()
+  ingredient: string;
+
+  @IsOptional()
+  step: string;
 }

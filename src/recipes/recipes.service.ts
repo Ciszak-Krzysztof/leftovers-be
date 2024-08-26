@@ -1,9 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
 import { RecipesRepository } from './recipes.repository';
 import { GetRecipesQueryParamsDto } from './dto/get-recipe-query-params.dto';
-import { GetRecipesResponse } from './dto/get-recipe-response';
+import {
+  GetRecipeResponse,
+  GetRecipesResponse,
+} from './dto/get-recipe-response';
 
 @Injectable()
 export class RecipesService {
@@ -20,8 +27,18 @@ export class RecipesService {
     return this.recipeRepository.getRecipes(userId, queryParams);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} recipe`;
+  async getRecipeById(id: string, userId: string): Promise<GetRecipeResponse> {
+    const recipe = await this.recipeRepository.getRecipesById(id);
+
+    if (!recipe) {
+      throw new NotFoundException(`Recipe with ID ${id} was not found.`);
+    }
+
+    if (!recipe.isPublic && recipe.authorId !== userId) {
+      throw new ForbiddenException('Recipe is not public.');
+    }
+
+    return recipe;
   }
 
   update(id: number, updateRecipeDto: UpdateRecipeDto) {

@@ -13,7 +13,10 @@ import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
 import { GetUserId } from 'src/common/decorators/getUserId.decorator';
 import { GetRecipesQueryParamsDto } from './dto/get-recipe-query-params.dto';
-import { GetRecipesResponse } from './dto/get-recipe-response';
+import {
+  GetRecipeResponse,
+  GetRecipesResponse,
+} from './dto/get-recipe-response';
 
 @Controller('recipes')
 export class RecipesController {
@@ -33,8 +36,11 @@ export class RecipesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.recipesService.findOne(+id);
+  getRecipeById(
+    @GetUserId() userId: string | null,
+    @Param('id') id: string,
+  ): Promise<GetRecipeResponse> {
+    return this.recipesService.getRecipeById(id, userId);
   }
 
   @Patch(':id')

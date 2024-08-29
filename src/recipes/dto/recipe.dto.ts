@@ -35,3 +35,39 @@ export class RecipeDto {
   @ApiProperty()
   ratings: Rating[];
 }
+
+export class IngredientDto {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  recipeId: string;
+}
+
+export class PreparationStepDto {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  step: string;
+
+  @ApiProperty()
+  recipeId: string;
+}
+
+export class RatingDto {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  rating: number;
+
+  @ApiProperty()
+  recipeId: string;
+
+  @ApiProperty()
+  userId: string;
+}

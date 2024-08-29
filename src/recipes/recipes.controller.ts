@@ -77,6 +77,11 @@ export class RecipesController {
   }
 
   @Get(':id')
+  @ApiOperation({ description: 'Get recipe by id' })
+  @ApiOkResponse({
+    description: 'Recipe',
+    type: GetRecipeResponse,
+  })
   getRecipeById(
     @GetUserId() userId: string | null,
     @Param('id') id: string,

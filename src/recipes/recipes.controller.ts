@@ -6,7 +6,13 @@ import {
   GetRecipeResponse,
   GetRecipesResponse,
 } from './dto/get-recipe-response';
-import { ApiOkResponse, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiQuery,
+} from '@nestjs/swagger';
 
 @Controller('recipes')
 export class RecipesController {
@@ -81,6 +87,12 @@ export class RecipesController {
   @ApiOkResponse({
     description: 'Recipe',
     type: GetRecipeResponse,
+  })
+  @ApiNotFoundResponse({
+    description: 'Recipe not found',
+  })
+  @ApiForbiddenResponse({
+    description: 'Recipe is not public',
   })
   getRecipeById(
     @GetUserId() userId: string | null,

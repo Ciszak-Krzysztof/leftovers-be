@@ -1,4 +1,4 @@
-import { GetRecipeResponse } from 'src/recipes/dto/get-recipe-response';
+import { GetRecipeResponse } from 'src/recipes/dto/get-recipe-response.dto';
 
 export const mockedGetRecipeResponse: GetRecipeResponse = {
   id: '1',

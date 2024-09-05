@@ -1,4 +1,4 @@
-import { GetRecipesResponse } from 'src/recipes/dto/get-recipe-response';
+import { GetRecipesResponse } from 'src/recipes/dto/get-recipe-response.dto';
 
 export const mockedGetRecipesResponse: GetRecipesResponse = {
   recipes: [

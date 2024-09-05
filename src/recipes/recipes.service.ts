@@ -1,6 +1,7 @@
 import {
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { RecipesRepository } from './recipes.repository';
@@ -8,7 +9,8 @@ import { GetRecipesQueryParamsDto } from './dto/get-recipe-query-params.dto';
 import {
   GetRecipeResponse,
   GetRecipesResponse,
-} from './dto/get-recipe-response';
+} from './dto/get-recipe-response.dto';
+import { AddRecipeDto } from './dto/add-recipe.dto';
 
 @Injectable()
 export class RecipesService {
@@ -33,5 +35,16 @@ export class RecipesService {
     }
 
     return recipe;
+  }
+
+  async addRecipe(
+    authorId: string,
+    addRecipeDto: AddRecipeDto,
+  ): Promise<GetRecipeResponse> {
+    try {
+      return await this.recipeRepository.addRecipe(authorId, addRecipeDto);
+    } catch (error) {
+      throw new InternalServerErrorException('Error adding recipe to database');
+    }
   }
 }

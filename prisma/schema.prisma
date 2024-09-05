@@ -52,6 +52,7 @@ model Recipe {
   preparationTime  PreparationTime   @default(UP_TO_15_MIN)
   ingredients      Ingredient[]
   preparationSteps PreparationStep[]
+  numberOfServings Int               @default(1)
   isPublic         Boolean           @default(false)
   createdAt        DateTime          @default(now())
   authorId         String

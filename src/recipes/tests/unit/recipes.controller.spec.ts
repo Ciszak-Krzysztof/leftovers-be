@@ -1,14 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { RecipesController } from '../recipes.controller';
-import { RecipesService } from '../recipes.service';
-import { GetRecipesQueryParamsDto } from '../dto/get-recipe-query-params.dto';
+import { RecipesController } from '../../recipes.controller';
+import { RecipesService } from '../../recipes.service';
+import { GetRecipesQueryParamsDto } from '../../dto/get-recipe-query-params.dto';
 import {
   GetRecipeResponse,
   GetRecipesResponse,
-} from '../dto/get-recipe-response';
-import { mockedGetRecipeResponse } from './mocks/get-recipe-response.mock';
-import { mockedGetRecipesResponse } from './mocks/get-recipes-response.mock';
-import { mockedGetRecipesQueryParams } from './mocks/recipe-query-params.mock';
+} from '../../dto/get-recipe-response.dto';
+import { mockedGetRecipeResponse } from '../mocks/get-recipe-response.mock';
+import { mockedGetRecipesResponse } from '../mocks/get-recipes-response.mock';
+import { mockedGetRecipesQueryParams } from '../mocks/recipe-query-params.mock';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 
 describe('RecipesController', () => {
   let controller: RecipesController;
@@ -21,6 +24,9 @@ describe('RecipesController', () => {
           provide: RecipesService,
           useValue: { getRecipes: jest.fn(), getRecipeById: jest.fn() },
         },
+        AuthGuard,
+        JwtService,
+        ConfigService,
       ],
     }).compile();
 

@@ -5,7 +5,8 @@ import { Prisma } from '@prisma/client';
 import {
   GetRecipeResponse,
   GetRecipesResponse,
-} from './dto/get-recipe-response';
+} from './dto/get-recipe-response.dto';
+import { AddRecipeDto } from './dto/add-recipe.dto';
 
 @Injectable()
 export class RecipesRepository {
@@ -124,6 +125,46 @@ export class RecipesRepository {
         preparationSteps: true,
         ingredients: true,
         ratings: true,
+      },
+    });
+  }
+
+  async addRecipe(
+    authorId: string,
+    addRecipeDto: AddRecipeDto,
+  ): Promise<GetRecipeResponse> {
+    const {
+      title,
+      description,
+      categoryId,
+      preparationTime,
+      ingredients,
+      preparationSteps,
+      numberOfServings,
+      isPublic,
+    } = addRecipeDto;
+
+    return await this.prisma.recipe.create({
+      data: {
+        title,
+        description,
+        authorId,
+        categoryId,
+        preparationTime,
+        ingredients: {
+          create: ingredients,
+        },
+        preparationSteps: {
+          create: preparationSteps,
+        },
+        numberOfServings,
+        isPublic,
+      },
+      include: {
+        author: true,
+        category: true,
+        preparationSteps: true,
+        ingredients: true,
       },
     });
   }

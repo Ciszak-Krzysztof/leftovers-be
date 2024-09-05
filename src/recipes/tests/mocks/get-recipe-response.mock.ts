@@ -1,11 +1,12 @@
-import { GetRecipeResponse } from 'src/recipes/dto/get-recipe-response.dto';
+import { GetRecipeResponse } from '@/recipes/dto/get-recipe-response.dto';
+import { PreparationTime } from '@/recipes/enums/preparation-time.enum';
 
 export const mockedGetRecipeResponse: GetRecipeResponse = {
   id: '1',
   title: 'test',
   description: 'test',
   categoryId: '1',
-  preparationTime: 'UP_TO_15_MIN',
+  preparationTime: PreparationTime.UP_TO_15_MIN,
   ingredients: [
     {
       id: '1',

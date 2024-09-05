@@ -9,7 +9,7 @@ import {
 import { mockedGetRecipeResponse } from '../mocks/get-recipe-response.mock';
 import { mockedGetRecipesResponse } from '../mocks/get-recipes-response.mock';
 import { mockedGetRecipesQueryParams } from '../mocks/recipe-query-params.mock';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { AuthGuard } from '@/auth/guards/auth.guard';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
@@ -31,6 +31,10 @@ describe('RecipesController', () => {
     }).compile();
 
     controller = module.get<RecipesController>(RecipesController);
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
   });
 
   it('should be defined', () => {

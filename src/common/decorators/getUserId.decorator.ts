@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { JwtUserPayload } from 'src/auth/dto/jwt-payload.dto';
+import { JwtUserPayload } from '@/auth/dto/jwt-payload.dto';
 
 export const GetUserId = createParamDecorator(
   async (data: unknown, ctx: ExecutionContext): Promise<string | null> => {

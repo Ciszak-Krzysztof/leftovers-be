@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { RecipesService } from './recipes.service';
-import { GetUserId } from 'src/common/decorators/getUserId.decorator';
+import { GetUserId } from '@/common/decorators/getUserId.decorator';
 import { GetRecipesQueryParamsDto } from './dto/get-recipe-query-params.dto';
 import {
   GetRecipeResponse,
@@ -25,7 +25,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AddRecipeDto } from './dto/add-recipe.dto';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { AuthGuard } from '@/auth/guards/auth.guard';
 
 @Controller('recipes')
 @ApiTags('recipes')

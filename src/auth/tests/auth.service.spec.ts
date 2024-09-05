@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../auth.service';
-import { UsersRepository } from 'src/users/users.repository';
-import { mockedCorrectSignUpCredentials } from 'src/users/mocks/users.mock';
+import { UsersRepository } from '@/users/users.repository';
+import { mockedCorrectSignUpCredentials } from '@/users/mocks/users.mock';
 import { JwtService } from '@nestjs/jwt';
-import { MailingService } from 'src/mailing/mailing.service';
+import { MailingService } from '@/mailing/mailing.service';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 

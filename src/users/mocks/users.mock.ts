@@ -1,4 +1,4 @@
-import { AuthCredentialsDto } from 'src/auth/dto/auth-credentials.dto';
+import { AuthCredentialsDto } from '@/auth/dto/auth-credentials.dto';
 import { faker } from '@faker-js/faker';
 import { v4 as uuidv4 } from 'uuid';
 

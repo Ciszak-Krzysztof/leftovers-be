@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { GetRecipesQueryParamsDto } from 'src/recipes/dto/get-recipe-query-params.dto';
-import { RecipesService } from 'src/recipes/recipes.service';
+import { GetRecipesQueryParamsDto } from '@/recipes/dto/get-recipe-query-params.dto';
+import { RecipesService } from '@/recipes/recipes.service';
 import { mockedGetRecipesResponse } from '../mocks/get-recipes-response.mock';
 import { mockedGetRecipesQueryParams } from '../mocks/recipe-query-params.mock';
 import {
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common/exceptions';
-import { GetRecipeResponse } from 'src/recipes/dto/get-recipe-response.dto';
+import { GetRecipeResponse } from '@/recipes/dto/get-recipe-response.dto';
 import { mockedGetRecipeResponse } from '../mocks/get-recipe-response.mock';
 
 describe('RecipesService', () => {

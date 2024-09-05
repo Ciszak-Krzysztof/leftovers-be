@@ -27,6 +27,10 @@ describe('RecipesController', () => {
     controller = module.get<RecipesController>(RecipesController);
   });
 
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });

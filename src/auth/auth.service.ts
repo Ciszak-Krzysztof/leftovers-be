@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersRepository } from 'src/users/users.repository';
+import { UsersRepository } from '@/users/users.repository';
 import {
   AuthCredentialsDto,
   LoginCredentialsDto,
@@ -9,7 +9,7 @@ import { Tokens } from './dto/tokens.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { JwtPayload, VerifyAccountJwtPayload } from './dto/jwt-payload.dto';
-import { MailingService } from 'src/mailing/mailing.service';
+import { MailingService } from '@/mailing/mailing.service';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()

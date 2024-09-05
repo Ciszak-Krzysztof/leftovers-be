@@ -1,7 +1,7 @@
+import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { GetRecipesQueryParamsDto } from './dto/get-recipe-query-params.dto';
 import { Prisma } from '@prisma/client';
+import { GetRecipesQueryParamsDto } from './dto/get-recipe-query-params.dto';
 import {
   GetRecipeResponse,
   GetRecipesResponse,
@@ -115,8 +115,8 @@ export class RecipesRepository {
     return { recipes: recipes };
   }
 
-  async getRecipesById(id: string): Promise<GetRecipeResponse> {
-    return await this.prisma.recipe.findUnique({
+  getRecipesById(id: string): Promise<GetRecipeResponse> {
+    return this.prisma.recipe.findUnique({
       where: { id },
       include: {
         author: true,

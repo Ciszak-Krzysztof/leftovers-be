@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { RecipesService } from './recipes.service';
-import { GetUserId } from 'src/common/decorators/getUserId.decorator';
+import { GetUserId } from '@/common/decorators/getUserId.decorator';
 import { GetRecipesQueryParamsDto } from './dto/get-recipe-query-params.dto';
 import {
   GetRecipeResponse,

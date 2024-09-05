@@ -1,13 +1,14 @@
-import { GetRecipesQueryParamsDto } from 'src/recipes/dto/get-recipe-query-params.dto';
+import { GetRecipesQueryParamsDto } from '@/recipes/dto/get-recipe-query-params.dto';
+import { faker } from '@faker-js/faker';
 
 export const mockedGetRecipesQueryParams: GetRecipesQueryParamsDto = {
-  details: 'test',
+  details: 'true',
   categoryIds: ['1'],
   rating: 3,
   startDate: new Date(),
   endDate: new Date(),
-  title: 'test',
-  description: 'test',
-  ingredient: 'test',
-  step: 'test',
+  title: faker.lorem.word(),
+  description: faker.lorem.words({ min: 3, max: 5 }),
+  ingredient: faker.lorem.word(),
+  step: faker.lorem.word(),
 };

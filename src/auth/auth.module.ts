@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UsersRepository } from 'src/users/users.repository';
-import { PrismaModule } from 'src/prisma/prisma.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { MailingService } from 'src/mailing/mailing.service';
+import { PrismaModule } from '@/prisma/prisma.module';
+import { UsersRepository } from '@/users/users.repository';
+import { MailingService } from '@/mailing/mailing.service';
 
 @Module({
   imports: [

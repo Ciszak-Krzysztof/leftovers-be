@@ -1,9 +1,18 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { RecipesService } from './recipes.service';
-import { GetUserId } from 'src/common/decorators/getUserId.decorator';
+import { GetUserId } from '@/common/decorators/getUserId.decorator';
 import { GetRecipesQueryParamsDto } from './dto/get-recipe-query-params.dto';
-import { GetRecipesResponse } from './dto/get-recipe-response';
-import { ApiOkResponse, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import {
+  GetRecipeResponse,
+  GetRecipesResponse,
+} from './dto/get-recipe-response';
+import {
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiQuery,
+} from '@nestjs/swagger';
 
 @Controller('recipes')
 export class RecipesController {
@@ -71,5 +80,24 @@ export class RecipesController {
     @Query() queryParams: GetRecipesQueryParamsDto,
   ): Promise<GetRecipesResponse> {
     return this.recipesService.getRecipes(userId, queryParams);
+  }
+
+  @Get(':id')
+  @ApiOperation({ description: 'Get recipe by id' })
+  @ApiOkResponse({
+    description: 'Recipe',
+    type: GetRecipeResponse,
+  })
+  @ApiNotFoundResponse({
+    description: 'Recipe not found',
+  })
+  @ApiForbiddenResponse({
+    description: 'Recipe is not public',
+  })
+  getRecipeById(
+    @GetUserId() userId: string | null,
+    @Param('id') id: string,
+  ): Promise<GetRecipeResponse> {
+    return this.recipesService.getRecipeById(id, userId);
   }
 }

@@ -1,8 +1,11 @@
+import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { GetRecipesQueryParamsDto } from './dto/get-recipe-query-params.dto';
 import { Prisma } from '@prisma/client';
-import { GetRecipesResponse } from './dto/get-recipe-response';
+import { GetRecipesQueryParamsDto } from './dto/get-recipe-query-params.dto';
+import {
+  GetRecipeResponse,
+  GetRecipesResponse,
+} from './dto/get-recipe-response';
 
 @Injectable()
 export class RecipesRepository {
@@ -110,5 +113,18 @@ export class RecipesRepository {
     });
 
     return { recipes: recipes };
+  }
+
+  getRecipesById(id: string): Promise<GetRecipeResponse> {
+    return this.prisma.recipe.findUnique({
+      where: { id },
+      include: {
+        author: true,
+        category: true,
+        preparationSteps: true,
+        ingredients: true,
+        ratings: true,
+      },
+    });
   }
 }

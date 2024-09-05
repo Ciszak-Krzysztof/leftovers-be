@@ -1,3 +1,4 @@
+import { PreparationTime } from '@/recipes/enums/preparation-time.enum';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -44,7 +45,7 @@ async function main() {
       title: 'Example recipe',
       description: 'Example recipe description',
       categoryId: 'ea923918-bec5-4e3b-9753-c6405e90f773',
-      preparationTime: 'UP_TO_15_MIN',
+      preparationTime: PreparationTime.UP_TO_15_MIN,
       isPublic: false,
       authorId: 'f4f81f5f-ee2a-4dc6-a1af-3d6ad4fc12ca',
     },

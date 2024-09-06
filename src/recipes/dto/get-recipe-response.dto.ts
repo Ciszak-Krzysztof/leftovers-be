@@ -1,7 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Ingredient, PreparationStep, Rating } from '@prisma/client';
+import {
+  Ingredient,
+  PreparationStep,
+  PreparationTime,
+  Rating,
+} from '@prisma/client';
 import { IngredientDto, PreparationStepDto, RatingDto } from './recipe.dto';
-import { PreparationTime } from '../enums/preparation-time.enum';
 
 export class GetRecipeResponse {
   @ApiProperty({ example: '1' })
@@ -16,7 +20,7 @@ export class GetRecipeResponse {
   @ApiProperty({ example: '1' })
   categoryId: string;
 
-  @ApiProperty({ example: 'UP_TO_15_MIN' })
+  @ApiProperty({ example: PreparationTime.UP_TO_15_MIN })
   preparationTime: PreparationTime;
 
   @ApiProperty({ example: true })

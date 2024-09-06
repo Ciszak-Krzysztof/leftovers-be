@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PreparationTime } from '@prisma/client';
 import { IngredientDto, PreparationStepDto } from './recipe.dto';
 import {
   ArrayMinSize,
@@ -13,6 +12,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
+import { PreparationTime } from '@prisma/client';
 
 export class AddRecipeDto {
   @IsNotEmpty()
@@ -34,7 +34,7 @@ export class AddRecipeDto {
 
   @IsNotEmpty()
   @IsEnum(PreparationTime)
-  @ApiProperty({ example: 'UP_TO_15_MIN' })
+  @ApiProperty({ example: PreparationTime.UP_TO_30_MIN })
   preparationTime: PreparationTime;
 
   @IsNotEmpty()

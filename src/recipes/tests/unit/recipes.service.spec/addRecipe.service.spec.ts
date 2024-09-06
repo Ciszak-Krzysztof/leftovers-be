@@ -5,8 +5,9 @@ import { addRecipeDtoMock } from '../../mocks/add-recipe-dto.mock';
 import { mockedGetRecipeResponse } from '../../mocks/get-recipe-response.mock';
 import { GetRecipeResponse } from '@/recipes/dto/get-recipe-response.dto';
 import { InternalServerErrorException } from '@nestjs/common';
+import { faker } from '@faker-js/faker';
 
-describe('getRecipeById', () => {
+describe('RecipeService - addRecipe', () => {
   let service: RecipesService;
 
   beforeEach(async () => {
@@ -14,30 +15,38 @@ describe('getRecipeById', () => {
     service = module.get<RecipesService>(RecipesService);
   });
 
-  it('should call recipesRepository.addRecipe with the correct authorId and addRecipeDto and return a GetRecipeResponse', async () => {
-    const authorId = '1';
-    const addRecipeDto: AddRecipeDto = addRecipeDtoMock;
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
 
+  it('should call recipesRepository.addRecipe with the correct authorId and addRecipeDto and return a GetRecipeResponse', async () => {
+    // Arrange
+    const authorId = faker.string.uuid();
+    const addRecipeDto: AddRecipeDto = addRecipeDtoMock;
     const result: GetRecipeResponse = mockedGetRecipeResponse;
 
+    // Act
     jest.spyOn(service, 'addRecipe').mockResolvedValue(result);
 
+    // Assert
     expect(await service.addRecipe(authorId, addRecipeDto)).toEqual(result);
     expect(service.addRecipe).toHaveBeenCalledWith(authorId, addRecipeDto);
   });
 
   it('should throw InternalServerErrorException with error message if recipesRepository.addRecipe throw an error', async () => {
-    const authorId = '1';
+    // Arrange
+    const authorId = faker.string.uuid();
     const addRecipeDto: AddRecipeDto = addRecipeDtoMock;
 
+    // Act
     jest.spyOn(service, 'addRecipe').mockImplementation(async () => {
       throw new InternalServerErrorException('Error adding recipe to database');
     });
 
+    // Assert
     await expect(service.addRecipe(authorId, addRecipeDto)).rejects.toThrow(
       InternalServerErrorException,
     );
-
     expect(service.addRecipe).toHaveBeenCalledWith(authorId, addRecipeDto);
   });
 });

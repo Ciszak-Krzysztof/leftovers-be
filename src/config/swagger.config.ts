@@ -3,8 +3,8 @@ import { INestApplication } from '@nestjs/common';
 
 export function setupSwagger(app: INestApplication): void {
   const config = new DocumentBuilder()
-    .setTitle('Users')
-    .setDescription('The Users API description')
+    .setTitle('Leftovers API')
+    .setDescription('The Leftovers API description')
     .setVersion('0.1')
     .build();
 

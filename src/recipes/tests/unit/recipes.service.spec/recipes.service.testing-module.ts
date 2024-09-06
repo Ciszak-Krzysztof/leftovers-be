@@ -9,6 +9,7 @@ export const createRecipesServiceTestingModule = async () => {
         useValue: {
           getRecipes: jest.fn(),
           getRecipeById: jest.fn(),
+          addRecipe: jest.fn(),
         },
       },
     ],

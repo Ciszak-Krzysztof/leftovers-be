@@ -134,6 +134,8 @@ export class RecipesController {
   @UseGuards(AuthGuard)
   @HttpCode(201)
   addRecipe(
+    @GetUserId() authorId: string | null,
+    @Body() addRecipeDto: AddRecipeDto,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -143,13 +145,11 @@ export class RecipesController {
             message: 'File is too large. Max file size is 10MB',
           }),
         ],
-        fileIsRequired: true,
+        fileIsRequired: false,
       }),
     )
-    file: Express.Multer.File,
-    @GetUserId() authorId: string | null,
-    @Body() addRecipeDto: AddRecipeDto,
+    file?: Express.Multer.File,
   ): Promise<GetRecipeResponse> {
-    return this.recipesService.addRecipe(file, authorId, addRecipeDto);
+    return this.recipesService.addRecipe(authorId, addRecipeDto, file);
   }
 }

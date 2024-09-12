@@ -42,19 +42,21 @@ export class RecipesService {
   }
 
   async addRecipe(
-    file: Express.Multer.File,
     authorId: string,
     addRecipeDto: AddRecipeDto,
+    file?: Express.Multer.File,
   ): Promise<GetRecipeResponse> {
-    const fileUploadResult = await this.filesService.uploadSingleFile({
-      file,
-      uploadFileDto: { type: 'recipe', isPublic: false },
-    });
+    const fileUploadResult =
+      file &&
+      (await this.filesService.uploadSingleFile({
+        file,
+        uploadFileDto: { type: 'recipe', isPublic: false },
+      }));
     try {
       return await this.recipeRepository.addRecipe(
         authorId,
         addRecipeDto,
-        fileUploadResult.key,
+        fileUploadResult?.key,
       );
     } catch (error) {
       throw new InternalServerErrorException('Error adding recipe to database');

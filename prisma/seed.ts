@@ -1,5 +1,4 @@
-import { PreparationTime } from '@/recipes/enums/preparation-time.enum';
-import { PrismaClient } from '@prisma/client';
+import { PreparationTime, PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 

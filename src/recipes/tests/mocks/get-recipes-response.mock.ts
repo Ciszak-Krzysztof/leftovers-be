@@ -1,5 +1,5 @@
-import { GetRecipesResponse } from '@/recipes/dto/get-recipe-response';
-import { PreparationTime } from '@/recipes/enums/preparation-time.enum';
+import { GetRecipesResponse } from '@/recipes/dto/get-recipe-response.dto';
+import { PreparationTime } from '@prisma/client';
 
 export const mockedGetRecipesResponse: GetRecipesResponse = {
   recipes: [

@@ -1,20 +1,34 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { RecipesService } from './recipes.service';
 import { GetUserId } from '@/common/decorators/getUserId.decorator';
 import { GetRecipesQueryParamsDto } from './dto/get-recipe-query-params.dto';
 import {
   GetRecipeResponse,
   GetRecipesResponse,
-} from './dto/get-recipe-response';
+} from './dto/get-recipe-response.dto';
 import {
   ApiForbiddenResponse,
+  ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiQuery,
+  ApiTags,
 } from '@nestjs/swagger';
+import { AddRecipeDto } from './dto/add-recipe.dto';
+import { AuthGuard } from '@/auth/guards/auth.guard';
 
 @Controller('recipes')
+@ApiTags('recipes')
 export class RecipesController {
   constructor(private readonly recipesService: RecipesService) {}
 
@@ -99,5 +113,22 @@ export class RecipesController {
     @Param('id') id: string,
   ): Promise<GetRecipeResponse> {
     return this.recipesService.getRecipeById(id, userId);
+  }
+
+  @Post()
+  @ApiOperation({ description: 'Add new recipe' })
+  @ApiOkResponse({
+    description: 'Created recipe',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Error adding recipe to database',
+  })
+  @UseGuards(AuthGuard)
+  @HttpCode(201)
+  addRecipe(
+    @GetUserId() authorId: string | null,
+    @Body() addRecipeDto: AddRecipeDto,
+  ): Promise<GetRecipeResponse> {
+    return this.recipesService.addRecipe(authorId, addRecipeDto);
   }
 }

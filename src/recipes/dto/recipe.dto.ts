@@ -1,5 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Ingredient, PreparationStep, Rating } from '@prisma/client';
+import {
+  Ingredient,
+  PreparationStep,
+  PreparationTime,
+  Rating,
+} from '@prisma/client';
 
 export class RecipeDto {
   @ApiProperty()
@@ -15,7 +20,7 @@ export class RecipeDto {
   categoryId: string;
 
   @ApiProperty()
-  preparationTime: string;
+  preparationTime: PreparationTime;
 
   @ApiProperty()
   ingredients: Ingredient[];

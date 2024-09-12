@@ -1,12 +1,17 @@
 import {
   Body,
   Controller,
+  FileTypeValidator,
   Get,
   HttpCode,
+  MaxFileSizeValidator,
   Param,
+  ParseFilePipe,
   Post,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { RecipesService } from './recipes.service';
 import { GetUserId } from '@/common/decorators/getUserId.decorator';
@@ -26,6 +31,8 @@ import {
 } from '@nestjs/swagger';
 import { AddRecipeDto } from './dto/add-recipe.dto';
 import { AuthGuard } from '@/auth/guards/auth.guard';
+import { MAX_FILE_SIZE } from '@/common/constants';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('recipes')
 @ApiTags('recipes')
@@ -116,6 +123,7 @@ export class RecipesController {
   }
 
   @Post()
+  @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ description: 'Add new recipe' })
   @ApiOkResponse({
     description: 'Created recipe',
@@ -126,9 +134,22 @@ export class RecipesController {
   @UseGuards(AuthGuard)
   @HttpCode(201)
   addRecipe(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+          new MaxFileSizeValidator({
+            maxSize: MAX_FILE_SIZE,
+            message: 'File is too large. Max file size is 10MB',
+          }),
+        ],
+        fileIsRequired: true,
+      }),
+    )
+    file: Express.Multer.File,
     @GetUserId() authorId: string | null,
     @Body() addRecipeDto: AddRecipeDto,
   ): Promise<GetRecipeResponse> {
-    return this.recipesService.addRecipe(authorId, addRecipeDto);
+    return this.recipesService.addRecipe(file, authorId, addRecipeDto);
   }
 }

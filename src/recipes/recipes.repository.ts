@@ -132,6 +132,7 @@ export class RecipesRepository {
   async addRecipe(
     authorId: string,
     addRecipeDto: AddRecipeDto,
+    imageKey: string,
   ): Promise<GetRecipeResponse> {
     const {
       title,
@@ -144,7 +145,7 @@ export class RecipesRepository {
       isPublic,
     } = addRecipeDto;
 
-    return await this.prisma.recipe.create({
+    return this.prisma.recipe.create({
       data: {
         title,
         description,
@@ -159,6 +160,7 @@ export class RecipesRepository {
         },
         numberOfServings,
         isPublic,
+        imageKey,
       },
       include: {
         author: true,

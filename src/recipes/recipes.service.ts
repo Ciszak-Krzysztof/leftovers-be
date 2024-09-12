@@ -12,6 +12,7 @@ import {
 } from './dto/get-recipe-response.dto';
 import { AddRecipeDto } from './dto/add-recipe.dto';
 import { FilesService } from '@/files/files.service';
+import { UpdateRecipeDto } from './dto/update-recipe.dto';
 
 @Injectable()
 export class RecipesService {
@@ -52,7 +53,7 @@ export class RecipesService {
         file,
         uploadFileDto: { type: 'recipe', isPublic: false },
       }));
-    console.log('error');
+
     try {
       return await this.recipeRepository.addRecipe(
         authorId,
@@ -60,8 +61,32 @@ export class RecipesService {
         fileUploadResult?.key,
       );
     } catch (error) {
-      console.log(error);
       throw new InternalServerErrorException('Error adding recipe to database');
+    }
+  }
+
+  async updateRecipe(
+    id: string,
+    updateRecipeDto: UpdateRecipeDto,
+    userId: string,
+    file?: Express.Multer.File,
+  ): Promise<GetRecipeResponse> {
+    const fileUploadResult =
+      file &&
+      (await this.filesService.uploadSingleFile({
+        file,
+        uploadFileDto: { type: 'recipe', isPublic: false },
+      }));
+
+    try {
+      return await this.recipeRepository.updateRecipe(
+        id,
+        updateRecipeDto,
+        userId,
+        fileUploadResult?.key,
+      );
+    } catch (error) {
+      throw new InternalServerErrorException('Error updating recipe');
     }
   }
 

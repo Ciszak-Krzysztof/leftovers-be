@@ -13,6 +13,7 @@ import {
   Min,
 } from 'class-validator';
 import { PreparationTime } from '@prisma/client';
+import { Transform } from 'class-transformer';
 
 export class AddRecipeDto {
   @IsNotEmpty()
@@ -67,11 +68,15 @@ export class AddRecipeDto {
   @IsInt()
   @Min(1)
   @Max(4)
+  @Transform(({ value }) => +value)
   @ApiProperty({ example: 4 })
   numberOfServings: number;
 
   @IsNotEmpty()
   @IsBoolean()
+  @Transform(({ value }) =>
+    value === 'true' ? true : value === 'false' ? false : value,
+  )
   @ApiProperty({ example: true })
   isPublic: boolean;
 }

@@ -52,6 +52,7 @@ export class RecipesService {
         file,
         uploadFileDto: { type: 'recipe', isPublic: false },
       }));
+    console.log('error');
     try {
       return await this.recipeRepository.addRecipe(
         authorId,
@@ -59,7 +60,26 @@ export class RecipesService {
         fileUploadResult?.key,
       );
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException('Error adding recipe to database');
+    }
+  }
+
+  async deleteRecipe(id: string, userId: string): Promise<void> {
+    const recipe = await this.getRecipeById(id, userId);
+
+    if (!recipe) {
+      throw new NotFoundException(`Recipe with ID ${id} was not found.`);
+    }
+
+    if (recipe.authorId !== userId) {
+      throw new ForbiddenException('User is not authorized');
+    }
+
+    await this.recipeRepository.deleteRecipe(id);
+
+    if (recipe.imageKey) {
+      await this.filesService.deleteFile(recipe.imageKey);
     }
   }
 }

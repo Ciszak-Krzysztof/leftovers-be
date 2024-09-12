@@ -145,6 +145,8 @@ export class RecipesRepository {
       isPublic,
     } = addRecipeDto;
 
+    const parsedPublic = isPublic.toString() === 'true' ? true : false;
+
     return this.prisma.recipe.create({
       data: {
         title,
@@ -158,8 +160,8 @@ export class RecipesRepository {
         preparationSteps: {
           create: preparationSteps,
         },
-        numberOfServings,
-        isPublic,
+        numberOfServings: +numberOfServings,
+        isPublic: parsedPublic,
         imageKey,
       },
       include: {
@@ -169,5 +171,30 @@ export class RecipesRepository {
         ingredients: true,
       },
     });
+  }
+
+  async deleteRecipe(id: string): Promise<void> {
+    const deletePreparationSteps = this.prisma.preparationStep.deleteMany({
+      where: { recipeId: id },
+    });
+
+    const deleteIngrediensts = this.prisma.ingredient.deleteMany({
+      where: { recipeId: id },
+    });
+
+    const deleteRating = this.prisma.rating.deleteMany({
+      where: { recipeId: id },
+    });
+
+    const deleteRecipe = this.prisma.recipe.delete({
+      where: { id },
+    });
+
+    await this.prisma.$transaction([
+      deletePreparationSteps,
+      deleteIngrediensts,
+      deleteRating,
+      deleteRecipe,
+    ]);
   }
 }

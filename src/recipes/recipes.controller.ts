@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   FileTypeValidator,
   Get,
   HttpCode,
@@ -151,5 +152,27 @@ export class RecipesController {
     file?: Express.Multer.File,
   ): Promise<GetRecipeResponse> {
     return this.recipesService.addRecipe(authorId, addRecipeDto, file);
+  }
+
+  @Delete()
+  @ApiOperation({ description: 'Delete recipe' })
+  @ApiOkResponse({
+    description: 'Recipe deleted',
+  })
+  @ApiNotFoundResponse({
+    description: 'Recipe not found',
+  })
+  @ApiForbiddenResponse({
+    description: 'User is not authorized',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Error deleting recipe from database',
+  })
+  @UseGuards(AuthGuard)
+  deleteRecipe(
+    @GetUserId() userId: string,
+    @Query('id') id: string,
+  ): Promise<void> {
+    return this.recipesService.deleteRecipe(id, userId);
   }
 }

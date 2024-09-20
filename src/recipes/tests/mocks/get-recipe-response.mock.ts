@@ -32,4 +32,5 @@ export const mockedGetRecipeResponse: GetRecipeResponse = {
       recipeId: '1',
     },
   ],
+  imageKey: 'recipe/2',
 };

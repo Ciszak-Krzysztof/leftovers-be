@@ -61,6 +61,9 @@ export class GetRecipeResponse {
     ],
   })
   ratings?: Rating[];
+
+  @ApiProperty({ type: String, example: 'recipe/5' })
+  imageKey: string;
 }
 
 export class GetRecipesResponse {

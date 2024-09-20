@@ -1,12 +1,19 @@
 import {
   Body,
   Controller,
+  Delete,
+  FileTypeValidator,
   Get,
   HttpCode,
+  MaxFileSizeValidator,
   Param,
+  ParseFilePipe,
   Post,
+  Put,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { RecipesService } from './recipes.service';
 import { GetUserId } from '@/common/decorators/getUserId.decorator';
@@ -26,6 +33,9 @@ import {
 } from '@nestjs/swagger';
 import { AddRecipeDto } from './dto/add-recipe.dto';
 import { AuthGuard } from '@/auth/guards/auth.guard';
+import { MAX_FILE_SIZE } from '@/common/constants';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateRecipeDto } from './dto/update-recipe.dto';
 
 @Controller('recipes')
 @ApiTags('recipes')
@@ -116,6 +126,7 @@ export class RecipesController {
   }
 
   @Post()
+  @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ description: 'Add new recipe' })
   @ApiOkResponse({
     description: 'Created recipe',
@@ -128,7 +139,80 @@ export class RecipesController {
   addRecipe(
     @GetUserId() authorId: string | null,
     @Body() addRecipeDto: AddRecipeDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+          new MaxFileSizeValidator({
+            maxSize: MAX_FILE_SIZE,
+            message: 'File is too large. Max file size is 10MB',
+          }),
+        ],
+        fileIsRequired: false,
+      }),
+    )
+    file?: Express.Multer.File,
   ): Promise<GetRecipeResponse> {
-    return this.recipesService.addRecipe(authorId, addRecipeDto);
+    return this.recipesService.addRecipe(authorId, addRecipeDto, file);
+  }
+
+  @Put(':id')
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiOperation({ description: 'Update recipe' })
+  @ApiOkResponse({
+    description: 'Recipe updated',
+  })
+  @ApiNotFoundResponse({
+    description: 'Recipe not found',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Error updating recipe to database',
+  })
+  @ApiForbiddenResponse({
+    description: 'User is not authorized',
+  })
+  @UseGuards(AuthGuard)
+  @HttpCode(200)
+  updateRecipe(
+    @Param('id') id: string,
+    @GetUserId() userId: string | null,
+    @Body() updateRecipeDto: UpdateRecipeDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+          new MaxFileSizeValidator({
+            maxSize: MAX_FILE_SIZE,
+            message: 'File is too large. Max file size is 10MB',
+          }),
+        ],
+        fileIsRequired: false,
+      }),
+    )
+    file?: Express.Multer.File,
+  ): Promise<GetRecipeResponse> {
+    return this.recipesService.updateRecipe(id, updateRecipeDto, userId, file);
+  }
+
+  @Delete()
+  @ApiOperation({ description: 'Delete recipe' })
+  @ApiOkResponse({
+    description: 'Recipe deleted',
+  })
+  @ApiNotFoundResponse({
+    description: 'Recipe not found',
+  })
+  @ApiForbiddenResponse({
+    description: 'User is not authorized',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Error deleting recipe from database',
+  })
+  @UseGuards(AuthGuard)
+  deleteRecipe(
+    @GetUserId() userId: string,
+    @Query('id') id: string,
+  ): Promise<void> {
+    return this.recipesService.deleteRecipe(id, userId);
   }
 }

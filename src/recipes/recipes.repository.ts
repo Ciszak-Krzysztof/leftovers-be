@@ -1,5 +1,9 @@
 import { PrismaService } from '@/prisma/prisma.service';
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { GetRecipesQueryParamsDto } from './dto/get-recipe-query-params.dto';
 import {
@@ -7,6 +11,7 @@ import {
   GetRecipesResponse,
 } from './dto/get-recipe-response.dto';
 import { AddRecipeDto } from './dto/add-recipe.dto';
+import { UpdateRecipeDto } from './dto/update-recipe.dto';
 
 @Injectable()
 export class RecipesRepository {
@@ -132,6 +137,7 @@ export class RecipesRepository {
   async addRecipe(
     authorId: string,
     addRecipeDto: AddRecipeDto,
+    imageKey?: string,
   ): Promise<GetRecipeResponse> {
     const {
       title,
@@ -144,7 +150,9 @@ export class RecipesRepository {
       isPublic,
     } = addRecipeDto;
 
-    return await this.prisma.recipe.create({
+    const parsedPublic = isPublic.toString() === 'true' ? true : false;
+
+    return this.prisma.recipe.create({
       data: {
         title,
         description,
@@ -157,8 +165,9 @@ export class RecipesRepository {
         preparationSteps: {
           create: preparationSteps,
         },
-        numberOfServings,
-        isPublic,
+        numberOfServings: +numberOfServings,
+        isPublic: parsedPublic,
+        imageKey: imageKey || '',
       },
       include: {
         author: true,
@@ -167,5 +176,122 @@ export class RecipesRepository {
         ingredients: true,
       },
     });
+  }
+
+  async updateRecipe(
+    id: string,
+    updateRecipeDto: UpdateRecipeDto,
+    userId: string,
+    imageKey?: string,
+  ): Promise<GetRecipeResponse> {
+    const recipe = await this.prisma.recipe.findUnique({
+      where: { id },
+      include: {
+        author: true,
+        category: true,
+        preparationSteps: true,
+        ingredients: true,
+      },
+    });
+
+    if (!recipe) {
+      throw new NotFoundException(`Recipe with ID ${id} was not found.`);
+    }
+
+    if (recipe.authorId !== userId) {
+      throw new ForbiddenException(
+        'You are not allowed to update this recipe.',
+      );
+    }
+
+    const {
+      title,
+      description,
+      categoryId,
+      preparationTime,
+      ingredients,
+      preparationSteps,
+      numberOfServings,
+      isPublic,
+    } = updateRecipeDto;
+
+    const updateRecipeData = {
+      title: title ?? recipe.title,
+      description: description ?? recipe.description,
+      categoryId: categoryId ?? recipe.categoryId,
+      preparationTime: preparationTime ?? recipe.preparationTime,
+      numberOfServings: numberOfServings ?? recipe.numberOfServings,
+      isPublic: isPublic ?? recipe.isPublic,
+      imageKey: imageKey ?? recipe.imageKey,
+    };
+
+    if (ingredients) {
+      const deleteIngredients = this.prisma.ingredient.deleteMany({
+        where: { recipeId: id },
+      });
+
+      const createIngredients = this.prisma.ingredient.createMany({
+        data: ingredients.map((ingredient) => ({
+          name: ingredient.name,
+          recipeId: id,
+        })),
+      });
+
+      await this.prisma.$transaction([deleteIngredients, createIngredients]);
+    }
+
+    if (preparationSteps) {
+      const deletePreparationSteps = this.prisma.preparationStep.deleteMany({
+        where: { recipeId: id },
+      });
+
+      const createPreparationSteps = this.prisma.preparationStep.createMany({
+        data: preparationSteps.map((preparationStep) => ({
+          step: preparationStep.step,
+          recipeId: id,
+        })),
+      });
+
+      await this.prisma.$transaction([
+        deletePreparationSteps,
+        createPreparationSteps,
+      ]);
+    }
+
+    return this.prisma.recipe.update({
+      where: { id },
+      data: updateRecipeData,
+      include: {
+        author: true,
+        category: true,
+        preparationSteps: true,
+        ingredients: true,
+      },
+    });
+  }
+
+  async deleteRecipe(id: string): Promise<void> {
+    const deletePreparationSteps = this.prisma.preparationStep.deleteMany({
+      where: { recipeId: id },
+    });
+
+    const deleteIngrediensts = this.prisma.ingredient.deleteMany({
+      where: { recipeId: id },
+    });
+
+    const deleteRating = this.prisma.rating.deleteMany({
+      where: { recipeId: id },
+    });
+
+    const deleteRecipe = this.prisma.recipe.delete({
+      where: { id },
+    });
+
+    await this.prisma.$transaction([
+      deletePreparationSteps,
+      deleteIngrediensts,
+      deleteRating,
+      deleteRecipe,
+    ]);
   }
 }

@@ -34,6 +34,7 @@ export const mockedGetRecipesResponse: GetRecipesResponse = {
           recipeId: '1',
         },
       ],
+      imageKey: 'recipe/3',
     },
     {
       id: '2',
@@ -66,6 +67,7 @@ export const mockedGetRecipesResponse: GetRecipesResponse = {
           recipeId: '2',
         },
       ],
+      imageKey: 'recipe/4',
     },
   ],
 };

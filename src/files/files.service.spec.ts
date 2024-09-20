@@ -1,6 +1,7 @@
+import { S3Client } from '@aws-sdk/client-s3';
+import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { FilesService } from './files.service';
-import { ConfigModule } from '@nestjs/config';
 
 describe('FilesService', () => {
   let service: FilesService;
@@ -12,7 +13,13 @@ describe('FilesService', () => {
           AWS_BUCKET_REGION: 'eu-central-1',
         })),
       ],
-      providers: [FilesService],
+      providers: [
+        FilesService,
+        {
+          provide: 'S3_CLIENT',
+          useValue: new S3Client(),
+        },
+      ],
     }).compile();
 
     service = module.get<FilesService>(FilesService);

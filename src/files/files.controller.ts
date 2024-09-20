@@ -61,7 +61,7 @@ export class FilesController {
     )
     file: Express.Multer.File,
     @Body() uploadFileDto: UploadFileDto,
-  ) {
+  ): Promise<UploadFileResponseDto> {
     return this.filesService.uploadSingleFile({
       file,
       uploadFileDto,
@@ -81,7 +81,7 @@ export class FilesController {
     description: 'The file',
     type: UploadFileResponseDto,
   })
-  async getFileUrl(@Param('key') key: string) {
+  async getFileUrl(@Param('key') key: string): Promise<GetFileUrlResponseDto> {
     return this.filesService.getFileUrl(key);
   }
 
@@ -98,7 +98,9 @@ export class FilesController {
     description: 'The signed URL',
     type: GetFileUrlResponseDto,
   })
-  async getSignedUrl(@Param('key') key: string) {
+  async getSignedUrl(
+    @Param('key') key: string,
+  ): Promise<GetFileUrlResponseDto> {
     return this.filesService.getPresignedSignedUrl(key);
   }
 
@@ -115,7 +117,7 @@ export class FilesController {
     description: 'The deleted file',
     type: DeleteFileResponseDto,
   })
-  async deleteFile(@Param('key') key: string) {
+  async deleteFile(@Param('key') key: string): Promise<DeleteFileResponseDto> {
     return this.filesService.deleteFile(key);
   }
 }

@@ -58,7 +58,7 @@ model Recipe {
   authorId         String
   author           User              @relation(fields: [authorId], references: [id])
   ratings          Rating[]
-  imageKey          String            @default("")
+  imageKey         String            @default("")
 }
 
 model Rating {

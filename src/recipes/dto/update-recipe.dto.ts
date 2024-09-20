@@ -7,6 +7,7 @@ import {
   IsEnum,
   IsInt,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Max,
   MaxLength,
@@ -15,32 +16,33 @@ import {
 import { PreparationTime } from '@prisma/client';
 import { Transform } from 'class-transformer';
 
-export class AddRecipeDto {
+export class UpdateRecipeDto {
+  @ApiProperty({ example: 'soup' })
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
-  @ApiProperty({ example: 'soup' })
-  title: string;
+  @IsOptional()
+  title?: string;
 
   @ApiProperty({ example: 'soup recipe' })
   @IsNotEmpty()
   @IsString()
   @MaxLength(200)
-  description: string;
+  @IsOptional()
+  description?: string;
 
   @ApiProperty({ example: '1' })
   @IsNotEmpty()
   @IsString()
-  categoryId: string;
+  @IsOptional()
+  categoryId?: string;
 
   @IsNotEmpty()
   @IsEnum(PreparationTime)
   @ApiProperty({ example: PreparationTime.UP_TO_30_MIN })
-  preparationTime: PreparationTime;
+  @IsOptional()
+  preparationTime?: PreparationTime;
 
-  @IsNotEmpty()
-  @IsArray()
-  @ArrayMinSize(1)
   @ApiProperty({
     type: IngredientDto,
     isArray: true,
@@ -49,11 +51,12 @@ export class AddRecipeDto {
       { id: '2', name: 'Ingredient 2', recipeId: '1' },
     ],
   })
-  ingredients: IngredientDto[];
-
   @IsNotEmpty()
   @IsArray()
   @ArrayMinSize(1)
+  @IsOptional()
+  ingredients?: IngredientDto[];
+
   @ApiProperty({
     type: PreparationStepDto,
     isArray: true,
@@ -62,21 +65,27 @@ export class AddRecipeDto {
       { id: '2', step: 'Step 2', recipeId: '1' },
     ],
   })
-  preparationSteps: PreparationStepDto[];
+  @IsNotEmpty()
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsOptional()
+  preparationSteps?: PreparationStepDto[];
 
+  @ApiProperty({ example: 4 })
   @IsNotEmpty()
   @IsInt()
   @Min(1)
   @Max(4)
   @Transform(({ value }) => +value)
-  @ApiProperty({ example: 4 })
-  numberOfServings: number;
+  @IsOptional()
+  numberOfServings?: number;
 
+  @ApiProperty({ example: true })
   @IsNotEmpty()
   @IsBoolean()
   @Transform(({ value }) =>
     value === 'true' ? true : value === 'false' ? false : value,
   )
-  @ApiProperty({ example: true })
-  isPublic: boolean;
+  @IsOptional()
+  isPublic?: boolean;
 }

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { SendEmailDto } from './dto/sendEmail.dto';
 import { AccountConfirmationEmailDto } from './dto/accountConfirmationEmail.dto';
 import { ConfigService } from '@nestjs/config';
+import { ResetPasswordEmailDto } from './dto/reset-password-email.dto';
 
 @Injectable()
 export class MailingService {
@@ -28,6 +29,20 @@ export class MailingService {
         link: verifyLink,
       },
       template: './verifyAccount',
+    });
+  }
+
+  async sendResetPasswordEmail(
+    resetPasswordEmailDto: ResetPasswordEmailDto,
+  ): Promise<void> {
+    await this.mailerService.sendMail({
+      to: resetPasswordEmailDto.email,
+      subject: 'Reset Password',
+      context: {
+        email: resetPasswordEmailDto.email,
+        link: resetPasswordEmailDto.resetPasswordLink,
+      },
+      template: './resetPassword',
     });
   }
 

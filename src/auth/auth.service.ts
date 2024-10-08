@@ -11,6 +11,7 @@ import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { JwtPayload, VerifyAccountJwtPayload } from './dto/jwt-payload.dto';
 import { MailingService } from '@/mailing/mailing.service';
 import { ConfigService } from '@nestjs/config';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -58,6 +59,32 @@ export class AuthService {
     const user = await this.usersRepository.getUserByEmail(payload.email);
 
     await this.usersRepository.verifyUser(user.id);
+  }
+
+  async sendResetPasswordEmail(email: string): Promise<void> {
+    const user = await this.usersRepository.getUserByEmail(email);
+
+    if (!user) {
+      return;
+    }
+
+    const payload: JwtPayload = { userId: user.id, email };
+    const resetPasswordToken = await this.jwtService.signAsync(payload, {
+      expiresIn: '1d',
+      secret: this.configService.get<string>('JWT_SECRET'),
+    });
+    const resetPasswordLink = `${this.configService.get<string>(
+      'APP_URL',
+    )}/auth/reset-password?token=${resetPasswordToken}`;
+
+    await this.mailingService.sendResetPasswordEmail({
+      email,
+      resetPasswordLink,
+    });
+  }
+
+  async changePassword(changePasswordDto: ChangePasswordDto): Promise<void> {
+    await this.usersRepository.changeUserPassword(changePasswordDto);
   }
 
   async signIn(loginCredentialsDto: LoginCredentialsDto): Promise<Tokens> {

@@ -13,6 +13,7 @@ import { AuthCredentialsDto } from '../auth/dto/auth-credentials.dto';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Prisma } from '@prisma/client';
+import { ChangePasswordDto } from '@/auth/dto/change-password.dto';
 
 @Injectable()
 export class UsersRepository {
@@ -90,6 +91,28 @@ export class UsersRepository {
         error.code === 'P2025'
       ) {
         throw new NotFoundException(`User with ID ${id} not found.`);
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async changeUserPassword(
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<void> {
+    const { userId, password } = changePasswordDto;
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+    try {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { password: hashedPassword },
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotFoundException(`User with ID ${userId} not found.`);
       }
       throw new InternalServerErrorException();
     }
